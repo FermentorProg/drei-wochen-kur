@@ -18,6 +18,7 @@ export function habitAction(habit, date, patch) {
   if (isDone === wasDone) return;
   play(isDone ? 'blip' : 'blop');
   if (!isDone) return;
+  navigator.vibrate?.(15);
   const ms = habit !== 'sport' && milestoneReached(before, doneDates(st().habits[habit]), date);
   if (ms) celebrate('streak', ms, habit);
   if (habit === 'sport' && sportBefore < M.SPORT_GOAL && M.sportCountInWeek(st(), date) >= M.SPORT_GOAL) celebrate('sportGoal');
@@ -29,6 +30,7 @@ export function taskAction(id, date) {
   const done = ctx.store.update((s) => M.toggleTask(s, id, date));
   const t = M.findTask(ctx.store.state, id);
   play(done ? 'blip' : 'blop');
+  if (done) navigator.vibrate?.(15);
   if (t.repeatable) toast(`${t.title}: ${t.count}× 🎉`);
 }
 

@@ -6,6 +6,7 @@ import { checkBtn } from './dayitems.js';
 import { play } from './sound.js';
 import { ICON } from './icons.js';
 import { weekReview, reviewWeeks } from './review-model.js';
+import { guitarMinutes } from './extras-model.js';
 
 let reviewStart = null;
 
@@ -20,7 +21,7 @@ function review(state) {
   const highlights = r.notes.map((n) => `<li><b>${esc(n.title)}:</b> ${esc(n.text)}</li>`).join('');
   return `<div class="card rv"><div class="chips rv-weeks">${chips}</div>
     <p class="muted rv-range">${dm(r.start)} – ${dm(r.end)}${r.bestGuitarStreak >= 3 ? ` · längster Gitarren-Streak 🔥 ${r.bestGuitarStreak}` : ''}</p>
-    <div class="rv-tiles">${tile(r.guitar, 7, 'Gitarre', 'var(--magenta)')}${tile(r.yazio, 7, 'Yazio', 'var(--cyan)')}${tile(r.sport.count, SPORT_MAX, `Sport (${r.sport.kraft} K / ${r.sport.ausdauer} A)`, 'var(--yellow)')}</div>
+    <div class="rv-tiles">${tile(r.guitar, 7, `Gitarre${guitarMinutes(state, r.start, r.end) ? ` · ${guitarMinutes(state, r.start, r.end)} min` : ''}`, 'var(--magenta)')}${tile(r.yazio, 7, 'Yazio', 'var(--cyan)')}${tile(r.sport.count, SPORT_MAX, `Sport (${r.sport.kraft} K / ${r.sport.ausdauer} A)`, 'var(--yellow)')}</div>
     ${r.tasksDone.length || r.cooked.length ? `<h3>Erledigt</h3><ul class="rv-list">${list(r.tasksDone)}${list(r.cooked.map((c) => `🍲 ${c}`))}</ul>` : '<p class="muted">Noch keine Aufgaben erledigt in dieser Woche.</p>'}
     ${highlights ? `<h3>Aus dem Tagebuch</h3><ul class="rv-list">${highlights}</ul>` : ''}</div>`;
 }

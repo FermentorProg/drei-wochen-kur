@@ -31,6 +31,11 @@ export function renderParking(el, state, day) {
     return `<div class="pk-group" style="--cat:${c.color}"><h3>${esc(M.categoryLabel(state, k))}</h3>
       <div class="card list">${list.map((t) => taskRow(t, day)).join('')}</div></div>`;
   }).join('');
+  const orphans = open.filter((t) => !M.CATEGORIES[t.category]);
+  if (orphans.length) {
+    html += `<div class="pk-group" style="--cat:#A99BD6"><h3>Sonstiges</h3>
+      <div class="card list">${orphans.map((t) => taskRow(t, day)).join('')}</div></div>`;
+  }
   if (!open.length) html = '<div class="card placeholder">Parkplatz ist leer – stark! 💪</div>';
   if (done.length) {
     html += `<details class="done-list"><summary>Erledigt (${done.length})</summary>

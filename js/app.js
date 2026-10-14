@@ -7,7 +7,9 @@ import { renderParking, openTaskEditor } from './parking.js';
 import { renderCheckin } from './checkin.js';
 import { renderGoals } from './goals.js';
 import { renderNotes } from './notes.js';
-import { openSettings, setMutedAction, exportRaw } from './settings.js';
+import { openSettings, setMutedAction, exportRaw, exportBackup } from './settings.js';
+import { backupDue, daysSinceBackup, snoozeBackup, nextCountdown } from './extras-model.js';
+import { finishTimerIfDone } from './timer.js';
 import { refreshSheet } from './sheet.js';
 import { enableDnd } from './dnd.js';
 import { moveTask } from './actions.js';
@@ -18,15 +20,18 @@ const $ = (id) => document.getElementById(id);
 
 function renderHeader(state, day) {
   const n = dayOfKur(day, KUR_START, KUR_END);
-  $('daycount').textContent = n ? `Tag ${n} von 22`
+  const main = n ? `Tag ${n} von 22`
     : day < KUR_START ? `Noch ${diffDays(day, KUR_START)} Tage bis zur Kur` : 'Kur geschafft! 🎉';
+  const cd = nextCountdown(state, day);
+  const sub = cd ? (cd.days === 1 ? `Morgen: ${cd.label}` : `noch ${cd.days} Tage bis ${cd.label}`) : '';
+  $('daycount').innerHTML = `${esc(main)}${sub ? `<small>⏳ ${esc(sub)}</small>` : ''}`;
   $('btn-mute').innerHTML = state.settings.muted ? ICON.mute : ICON.sound;
   $('btn-mute').setAttribute('aria-label', state.settings.muted ? 'Ton einschalten' : 'Ton ausschalten');
 }
 
 function renderAlert() {
   const el = $('alert');
-  if (!ctx.store.broken) { el.innerHTML = ''; return; }
+  if (!ctx.store.broken) return renderBackupReminder(el);
   el.innerHTML = `<div class="banner" role="alert"><div class="banner-title">⚠️ GESPEICHERTE DATEN BESCHÄDIGT</div>
     <p>Die App startet mit den Startdaten. Sichere die alten Rohdaten, bevor du weitermachst.</p>
     <div class="row-btns"><button class="btn" data-a="raw">Rohdaten sichern</button><button class="btn primary" data-a="reset">Neu starten</button></div></div>`;
@@ -37,7 +42,23 @@ function renderAlert() {
   };
 }
 
+function renderBackupReminder(el) {
+  const state = ctx.store.state;
+  const day = today();
+  if (!backupDue(state, day)) { el.innerHTML = ''; return; }
+  const since = daysSinceBackup(state, day);
+  el.innerHTML = `<div class="banner" role="status"><div class="banner-title">💾 BACKUP</div>
+    <p>${since === null ? 'Du hast noch nie ein Backup gemacht.' : `Letztes Backup vor ${since} Tagen.`} Deine Daten liegen nur auf diesem Handy.</p>
+    <div class="row-btns"><button class="btn primary" data-a="backup">Jetzt sichern</button><button class="btn" data-a="later">Später</button></div></div>`;
+  el.onclick = (e) => {
+    const a = e.target.closest('[data-a]')?.dataset.a;
+    if (a === 'backup') exportBackup();
+    if (a === 'later') ctx.store.update((s) => snoozeBackup(s, day));
+  };
+}
+
 function renderAll() {
+  finishTimerIfDone();
   const state = ctx.store.state;
   const day = today();
   renderHeader(state, day);
@@ -93,6 +114,9 @@ async function init() {
   }, 60000);
 
   renderAll();
+
+  // Dauerhaften Speicher anfordern, damit Chrome die Daten nicht bei Platzmangel löscht.
+  navigator.storage?.persist?.().then((ok) => { ctx.persisted = ok; }).catch(() => {});
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     navigator.serviceWorker.register('sw.js').catch(() => {});

@@ -8,6 +8,7 @@ import { openDatePicker, openTaskEditor } from './parking.js';
 import { ICON } from './icons.js';
 import { guitarPieces } from './goals-model.js';
 import { openEventEditor } from './events.js';
+import { openTimer, timerLabel } from './timer.js';
 
 const CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 const SPORT_TYPES = { kraft: 'Kraft', ausdauer: 'Ausdauer' };
@@ -51,7 +52,7 @@ function eventRow(state, e) {
     ? `<div><button class="btn small" data-act="confirm-ev" data-id="${e.id}">Diesen Termin festmachen</button></div>` : '';
   return `<div class="item event${e.optional ? ' opt' : ''}${done ? ' done' : ''}">
     <span class="ev-mark">${done ? '✓' : e.optional ? '?' : '●'}</span>
-    <div class="item-main"><button class="item-title" data-act="ev-open" data-id="${e.id}"><span class="t">${esc(e.title)}</span>${e.endDate ? `<span class="badge">bis ${shortDate(e.endDate)}</span>` : ''}</button>${confirm}</div>
+    <div class="item-main"><button class="item-title" data-act="ev-open" data-id="${e.id}"><span class="t">${esc(e.title)}</span>${e.endDate ? `<span class="badge">bis ${shortDate(e.endDate)}</span>` : ''}<span class="edit-hint" aria-hidden="true">✎</span></button>${confirm}</div>
   </div>`;
 }
 
@@ -68,7 +69,8 @@ export function dayItemsHTML(state, date) {
   <div class="item guitar">
     ${checkBtn(g.done, 'habit', 'data-habit="guitar"', 'Gitarre erledigt', `guitar:${date}`)}
     <div class="item-main">
-      <div class="item-title">Gitarre <small>mind. 30 min</small>${streakBadge(state, 'guitar', date)}</div>
+      <div class="item-title">Gitarre <small>mind. 30 min</small>${streakBadge(state, 'guitar', date)}${g.minutes ? `<span class="badge">${g.minutes} min</span>` : ''}
+        <button class="btn small timer-btn" data-act="timer">⏱ ${timerLabel(date) || 'Timer'}</button></div>
       <div class="chips">${pieces}</div>
       <textarea data-act="hnote" data-habit="guitar" placeholder="Was gespielt / gelernt?" aria-label="Gitarre Notiz">${esc(g.note)}</textarea>
     </div>
@@ -111,6 +113,7 @@ export function bindItems(el, date) {
     else if (act === 'confirm-ev') confirmEventAction(id);
     else if (act === 'new-task') openTaskEditor(null, date);
     else if (act === 'new-event') openEventEditor(null, date);
+    else if (act === 'timer') openTimer(date);
     else if (act === 'ev-open') openEventEditor(st.events.find((x) => x.id === id));
   };
   el.oninput = (e) => {

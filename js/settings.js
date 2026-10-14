@@ -2,6 +2,7 @@ import { ctx, today, toast } from './ctx.js';
 import { openSheet } from './sheet.js';
 import { play, setMuted, SOUND_LIST } from './sound.js';
 import { ICON } from './icons.js';
+import { markBackup, daysSinceBackup } from './extras-model.js';
 
 export function setMutedAction(m) {
   ctx.store.update((s) => { s.settings.muted = m; });
@@ -17,7 +18,10 @@ function download(name, text) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
-export const exportBackup = () => download(`drei-wochen-kur-${today()}.json`, ctx.store.exportJSON());
+export function exportBackup() {
+  ctx.store.update((s) => markBackup(s, today()));
+  download(`drei-wochen-kur-${today()}.json`, ctx.store.exportJSON());
+}
 export const exportRaw = (raw) => download(`drei-wochen-kur-defekt-${today()}.json`, raw);
 
 export function openSettings() {
@@ -34,7 +38,7 @@ export function openSettings() {
           <button class="btn" data-a="import">Importieren …</button>
           <input type="file" accept="application/json,.json" hidden>
         </div>
-        <p class="muted" style="font-size:13px">Alle Daten liegen nur auf diesem Handy. Exportiere ab und zu ein Backup.</p>
+        <p class="muted" style="font-size:13px">Alle Daten liegen nur auf diesem Handy. Letztes Backup: ${s.lastBackup ? (daysSinceBackup(ctx.store.state, today()) === 0 ? 'heute' : `vor ${daysSinceBackup(ctx.store.state, today())} Tagen`) : 'noch nie'}. Speicher dauerhaft geschützt: ${ctx.persisted ? 'ja ✓' : 'nicht bestätigt'}.</p>
         <h3>Sounds anhören</h3>
         <div class="list">${SOUND_LIST.map(([k, l]) => `<div class="set-row"><span>${l}</span><button class="icon-btn" data-play="${k}" aria-label="${l} abspielen">${ICON.play}</button></div>`).join('')}</div>`;
       const file = body.querySelector('input[type=file]');
