@@ -5,23 +5,33 @@ import * as X from './extras-model.js';
 import { habitAction } from './actions.js';
 import { play } from './sound.js';
 
-const DURATION = 30;
 const R = 90;
 const C = 2 * Math.PI * R;
 let tick = null;
 let wakeLock = null;
 
-const fmt = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+const pad = (n) => String(n).padStart(2, '0');
+function fmt(sec) {
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  return h ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+}
 
-// Abgelaufenen Timer verbuchen: Minuten gutschreiben, Gitarre abhaken, feiern.
-export function finishTimerIfDone() {
+// Bei jedem Rendern und jede Sekunde im Timer-Sheet: Ziel feiern, vergessene Timer beenden.
+export function checkTimer() {
   const t = ctx.store.state.timer;
-  if (!t || !X.timerProgress(t, Date.now()).done) return false;
-  const min = ctx.store.update((s) => X.stopTimer(s, Date.now()), { silent: true });
-  if (!ctx.store.state.habits.guitar?.[t.date]?.done) habitAction('guitar', t.date);
-  play('jingle7');
-  toast(`🎸 ${min} Minuten geübt – stark!`, { big: true, ms: 3000 });
-  return true;
+  if (!t) return;
+  const now = Date.now();
+  if (X.timerExpired(t, now)) {
+    const min = ctx.store.update((s) => X.stopTimer(s, now));
+    toast(`Timer nach ${min} Minuten automatisch gestoppt`);
+    return;
+  }
+  if (X.timerProgress(t, now).goalReached && !t.celebrated) {
+    ctx.store.update((s) => { s.timer.celebrated = true; }, { silent: true });
+    if (!ctx.store.state.habits.guitar?.[t.date]?.done) habitAction('guitar', t.date);
+    play('jingle7');
+    toast(`🎸 ${t.goal || X.TIMER_GOAL_MIN} Minuten geschafft – spiel ruhig weiter!`, { big: true, ms: 3500 });
+  }
 }
 
 async function keepAwake() {
@@ -46,42 +56,50 @@ export function openTimer(date) {
           <circle cx="100" cy="100" r="${R}" class="ring-bg"/>
           <circle cx="100" cy="100" r="${R}" class="ring-fg" stroke-dasharray="${C}" stroke-dashoffset="${C}"/></svg>
         <div class="timer-num num" role="timer" aria-live="off"></div></div>
-        <p class="muted timer-msg">${t ? (other ? `Timer läuft für ${formatShort(t.date)}.` : 'Läuft – du kannst das Handy weglegen, die Zeit zählt weiter.') : `Bereit für ${DURATION} Minuten?`}</p>
+        <p class="muted timer-msg"></p>
         <div class="row-btns" style="justify-content:center">${t
-          ? '<button class="btn" data-a="stop">Stopp & Minuten speichern</button>'
-          : '<button class="btn primary" data-a="start">▶ Start</button>'}</div>`;
+          ? '<button class="btn primary" data-a="stop">⏹ Stopp & Minuten speichern</button>'
+          : '<button class="btn primary" data-a="start">▶ Start</button>'}</div>
+        <p class="muted" style="text-align:center;font-size:12px">Ziel: mindestens ${X.TIMER_GOAL_MIN} Minuten. Danach läuft die Zeit weiter – jede Minute zählt.</p>`;
       const ring = body.querySelector('.ring-fg');
       const num = body.querySelector('.timer-num');
+      const msg = body.querySelector('.timer-msg');
       const update = () => {
+        checkTimer();
         const cur = ctx.store.state.timer;
-        const p = cur ? X.timerProgress(cur, Date.now()) : { remainingSec: DURATION * 60 };
-        const total = (cur?.duration || DURATION) * 60;
-        ring.setAttribute('stroke-dashoffset', String(C * (p.remainingSec / total)));
-        num.textContent = fmt(p.remainingSec);
-        if (cur && p.done) { release(); closeSheet(); finishTimerIfDone(); }
+        if (!cur) { num.textContent = '00:00'; ring.setAttribute('stroke-dashoffset', String(C)); msg.textContent = 'Bereit?'; return; }
+        const p = X.timerProgress(cur, Date.now());
+        const goalSec = (cur.goal || X.TIMER_GOAL_MIN) * 60;
+        ring.setAttribute('stroke-dashoffset', String(C * (1 - p.fraction)));
+        ring.classList.toggle('goal', p.goalReached);
+        num.textContent = fmt(p.elapsedSec);
+        msg.textContent = other ? `Timer läuft für ${formatShort(cur.date)}.`
+          : p.goalReached ? `Ziel erreicht ✓ · Bonuszeit +${fmt(p.elapsedSec - goalSec)}`
+          : `Noch ${fmt(goalSec - p.elapsedSec)} bis zum Ziel`;
       };
-      update();
       release();
+      update();
       if (t) { tick = setInterval(update, 1000); keepAwake(); }
       body.onclick = (e) => {
         const a = e.target.closest('[data-a]')?.dataset.a;
         if (a === 'start') {
-          ctx.store.update((s) => X.startTimer(s, date, Date.now(), DURATION));
+          ctx.store.update((s) => X.startTimer(s, date, Date.now()));
           play('blip');
           renderTimer(body);
         } else if (a === 'stop') {
           const min = ctx.store.update((s) => X.stopTimer(s, Date.now()));
           release();
           closeSheet();
-          toast(min ? `${min} Minuten gespeichert` : 'Timer gestoppt');
+          toast(min ? `${min} Minuten gespeichert 🎸` : 'Timer gestoppt');
         }
       };
     },
   });
 }
 
+// Laufzeit für den Timer-Button in der Heute-Liste.
 export const timerLabel = (date) => {
   const t = ctx.store.state.timer;
   if (!t || t.date !== date) return null;
-  return fmt(X.timerProgress(t, Date.now()).remainingSec);
+  return fmt(X.timerProgress(t, Date.now()).elapsedSec);
 };

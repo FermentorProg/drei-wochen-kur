@@ -17,19 +17,24 @@ export function markBackup(state, today) { state.settings.lastBackup = today; }
 export function snoozeBackup(state, today) { state.settings.backupSnooze = today; }
 
 // ---------- Gitarren-Timer ----------
-// Der Timer speichert nur die Startzeit, damit er Bildschirmsperre und Neustart der App übersteht.
-export function startTimer(state, date, now, duration = 30) {
-  state.timer = { date, start: now, duration };
+// Stoppuhr mit Mindestziel. Gespeichert wird nur die Startzeit, damit sie Bildschirmsperre und Neustart übersteht.
+export const TIMER_GOAL_MIN = 30;
+export const TIMER_MAX_MIN = 240;
+
+export function startTimer(state, date, now) {
+  state.timer = { date, start: now, goal: TIMER_GOAL_MIN, celebrated: false };
 }
 export function timerProgress(timer, now) {
-  const elapsedMs = Math.max(0, now - timer.start);
-  const remainingSec = Math.max(0, timer.duration * 60 - Math.floor(elapsedMs / 1000));
-  return { elapsedMin: Math.floor(elapsedMs / 60000), remainingSec, done: remainingSec === 0 };
+  const elapsedSec = Math.floor(Math.max(0, now - timer.start) / 1000);
+  const goalSec = (timer.goal || TIMER_GOAL_MIN) * 60;
+  return { elapsedSec, goalReached: elapsedSec >= goalSec, fraction: Math.min(1, elapsedSec / goalSec) };
 }
+export const timerExpired = (timer, now) => now - timer.start > TIMER_MAX_MIN * 60000;
+
 export function stopTimer(state, now) {
   const t = state.timer;
   if (!t) return 0;
-  const minutes = Math.min(t.duration, Math.round(Math.max(0, now - t.start) / 60000));
+  const minutes = Math.min(TIMER_MAX_MIN, Math.round(Math.max(0, now - t.start) / 60000));
   const prev = state.habits.guitar?.[t.date]?.minutes || 0;
   if (minutes > 0) setHabit(state, 'guitar', t.date, { minutes: prev + minutes });
   state.timer = null;

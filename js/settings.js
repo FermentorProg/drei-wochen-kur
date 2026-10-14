@@ -18,6 +18,30 @@ function download(name, text) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
+function backupFile() {
+  return new File([ctx.store.exportJSON()], `drei-wochen-kur-${today()}.json`, { type: 'application/json' });
+}
+
+async function shareBackup() {
+  const file = backupFile();
+  try {
+    await navigator.share({ files: [file], title: 'Drei Wochen Kur – Backup' });
+    ctx.store.update((s) => markBackup(s, today()));
+  } catch (err) {
+    if (err?.name !== 'AbortError') toast('Teilen nicht möglich – nutze „Exportieren“ oder „Kopieren“');
+  }
+}
+
+async function copyBackup() {
+  try {
+    await navigator.clipboard.writeText(ctx.store.exportJSON());
+    ctx.store.update((s) => markBackup(s, today()));
+    toast('Daten kopiert – jetzt z. B. im Chat einfügen');
+  } catch {
+    toast('Kopieren nicht möglich – nutze „Exportieren“');
+  }
+}
+
 export function exportBackup() {
   ctx.store.update((s) => markBackup(s, today()));
   download(`drei-wochen-kur-${today()}.json`, ctx.store.exportJSON());
@@ -34,7 +58,9 @@ export function openSettings() {
         <div class="set-row"><span>Klick beim Tab-Wechsel</span><button class="toggle" role="switch" aria-checked="${!!s.tabClick}" data-a="tabclick" aria-label="Klick beim Tab-Wechsel"></button></div>
         <h3>Backup</h3>
         <div class="row-btns">
-          <button class="btn primary" data-a="export">Exportieren (JSON)</button>
+          <button class="btn primary" data-a="export">Exportieren (Datei)</button>
+          ${navigator.canShare?.({ files: [backupFile()] }) ? '<button class="btn" data-a="share">Teilen …</button>' : ''}
+          <button class="btn" data-a="copy">Kopieren</button>
           <button class="btn" data-a="import">Importieren …</button>
           <input type="file" accept="application/json,.json" hidden>
         </div>
@@ -49,6 +75,8 @@ export function openSettings() {
         if (a === 'mute') setMutedAction(!s.muted);
         else if (a === 'tabclick') ctx.store.update((st) => { st.settings.tabClick = !st.settings.tabClick; });
         else if (a === 'export') exportBackup();
+        else if (a === 'share') shareBackup();
+        else if (a === 'copy') copyBackup();
         else if (a === 'import') file.click();
       };
       file.onchange = async () => {

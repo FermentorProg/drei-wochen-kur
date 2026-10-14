@@ -19,22 +19,30 @@ test('Backup fällig: nie gesichert ab Tag 3, sonst nach 5 Tagen, Später für h
   assert.equal(X.daysSinceBackup(st, '2026-10-22'), 6);
 });
 
-test('Timer: Fortschritt aus Startzeit, Minuten gutschreiben', () => {
+test('Timer zählt hoch: Ziel 30 min, danach weiter, alle Minuten zählen', () => {
   const st = seed();
   const t0 = Date.UTC(2026, 9, 20, 17, 0, 0);
-  X.startTimer(st, '2026-10-20', t0, 30);
+  X.startTimer(st, '2026-10-20', t0);
   let p = X.timerProgress(st.timer, t0 + 10 * 60000);
-  assert.deepEqual([p.elapsedMin, p.remainingSec, p.done], [10, 20 * 60, false]);
-  p = X.timerProgress(st.timer, t0 + 31 * 60000);
-  assert.equal(p.done, true);
-  const min = X.stopTimer(st, t0 + 31 * 60000);
-  assert.equal(min, 30, 'gedeckelt auf Timerdauer');
+  assert.deepEqual([p.elapsedSec, p.goalReached, p.fraction], [600, false, 1 / 3]);
+  p = X.timerProgress(st.timer, t0 + 45 * 60000);
+  assert.deepEqual([p.goalReached, p.fraction], [true, 1]);
+  assert.equal(X.stopTimer(st, t0 + 45 * 60000), 45, 'keine Deckelung auf 30');
   assert.equal(st.timer, null);
-  assert.equal(st.habits.guitar['2026-10-20'].minutes, 30);
-  X.startTimer(st, '2026-10-20', t0, 30);
+  assert.equal(st.habits.guitar['2026-10-20'].minutes, 45);
+  X.startTimer(st, '2026-10-20', t0);
   X.stopTimer(st, t0 + 12.4 * 60000);
-  assert.equal(st.habits.guitar['2026-10-20'].minutes, 42);
-  assert.equal(X.guitarMinutes(st, '2026-10-19', '2026-10-25'), 42);
+  assert.equal(st.habits.guitar['2026-10-20'].minutes, 57);
+  assert.equal(X.guitarMinutes(st, '2026-10-19', '2026-10-25'), 57);
+});
+
+test('vergessener Timer: nach 4 Stunden abgelaufen und gedeckelt', () => {
+  const st = seed();
+  const t0 = Date.UTC(2026, 9, 20, 17, 0, 0);
+  X.startTimer(st, '2026-10-20', t0);
+  assert.equal(X.timerExpired(st.timer, t0 + 3 * 3600000), false);
+  assert.equal(X.timerExpired(st.timer, t0 + 5 * 3600000), true);
+  assert.equal(X.stopTimer(st, t0 + 5 * 3600000), 240);
 });
 
 test('Countdown zum nächsten festen Termin', () => {

@@ -9,7 +9,7 @@ import { renderGoals } from './goals.js';
 import { renderNotes } from './notes.js';
 import { openSettings, setMutedAction, exportRaw, exportBackup } from './settings.js';
 import { backupDue, daysSinceBackup, snoozeBackup, nextCountdown } from './extras-model.js';
-import { finishTimerIfDone } from './timer.js';
+import { checkTimer } from './timer.js';
 import { refreshSheet } from './sheet.js';
 import { enableDnd } from './dnd.js';
 import { moveTask } from './actions.js';
@@ -58,7 +58,7 @@ function renderBackupReminder(el) {
 }
 
 function renderAll() {
-  finishTimerIfDone();
+  checkTimer();
   const state = ctx.store.state;
   const day = today();
   renderHeader(state, day);

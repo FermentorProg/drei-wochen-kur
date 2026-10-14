@@ -326,3 +326,4 @@ body.dragging { -webkit-user-select: none; user-select: none; }
 .timer-msg { text-align: center; }
 .timer-btn { margin-left: auto; }
 .edit-hint { margin-left: auto; color: var(--text2); font-size: 16px; padding-left: 6px; }
+.ring-fg.goal { stroke: var(--yellow); filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.7)); }
