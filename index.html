@@ -37,11 +37,13 @@
     <section class="tab active" id="tab-plan" aria-label="Plan">
       <h2>Kalender</h2>
       <div class="card cal" id="calendar"></div>
-      <div class="card sw" id="sport-week"></div>
       <h2 id="today-title">Heute</h2>
       <div class="card list" id="today"></div>
       <h2>Parkplatz</h2>
       <div id="parking" data-drop="parking"></div>
+    </section>
+    <section class="tab" id="tab-routine" aria-label="Routine">
+      <div id="routine"></div>
     </section>
     <section class="tab" id="tab-ziele" aria-label="Ziele">
       <div id="goals"></div>
@@ -55,6 +57,7 @@
 
   <nav class="tabbar" aria-label="Navigation">
     <button data-tab="plan" class="active">Plan</button>
+    <button data-tab="routine">Routine</button>
     <button data-tab="ziele">Ziele</button>
     <button data-tab="notizen">Notizen</button>
   </nav>

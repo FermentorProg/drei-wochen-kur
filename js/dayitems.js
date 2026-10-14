@@ -13,6 +13,7 @@ import { openTimer, timerLabel } from './timer.js';
 const CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 const SPORT_TYPES = { kraft: 'Kraft', ausdauer: 'Ausdauer' };
 const drafts = {};
+let routineOpen = false;
 const shortDate = (iso) => `${iso.slice(8)}.${iso.slice(5, 7)}.`;
 
 export function checkBtn(on, act, attrs, label, flashKey) {
@@ -56,17 +57,23 @@ function eventRow(state, e) {
   </div>`;
 }
 
-export function dayItemsHTML(state, date) {
+// Termine und Aufgaben eines Tages.
+export function agendaHTML(state, date) {
+  const { events, tasks } = M.itemsOnDate(state, date);
+  const html = `${events.map((e) => eventRow(state, e)).join('')}${tasks.map((t) => taskRow(t, today())).join('')}`;
+  return html || '<p class="muted" style="padding:8px 0">Keine Termine oder Aufgaben.</p>';
+}
+
+// Routine (Gitarre, Yazio, Sport) eines Tages.
+export function habitsHTML(state, date) {
   const g = state.habits.guitar?.[date] || {};
   const y = state.habits.yazio?.[date] || {};
   const s = state.habits.sport?.[date] || {};
-  const { events, tasks } = M.itemsOnDate(state, date);
   const pieces = Object.entries(guitarPieces(state))
     .map(([k, l]) => `<button class="chip${g.piece === k ? ' on' : ''}" data-act="piece" data-piece="${k}">${l}</button>`).join('');
   const types = Object.entries(SPORT_TYPES)
     .map(([k, l]) => `<button class="chip ${k}${s.types?.includes(k) ? ' on' : ''}" data-act="stype" data-type="${k}">${l}</button>`).join('');
-  return `${events.map((e) => eventRow(state, e)).join('')}
-  <div class="item guitar">
+  return `<div class="item guitar">
     ${checkBtn(g.done, 'habit', 'data-habit="guitar"', 'Gitarre erledigt', `guitar:${date}`)}
     <div class="item-main">
       <div class="item-title">Gitarre <small>mind. 30 min</small>${streakBadge(state, 'guitar', date)}${g.minutes ? `<span class="badge">${g.minutes} min</span>` : ''}
@@ -86,9 +93,10 @@ export function dayItemsHTML(state, date) {
       <div class="chips">${types}</div>
       <textarea data-act="hnote" data-habit="sport" placeholder="Notiz (optional)" aria-label="Sport Notiz">${esc(s.note)}</textarea>
     </div>
-  </div>
-  ${tasks.map((t) => taskRow(t, today())).join('')}`;
+  </div>`;
 }
+
+export const routineDone = (state, date) => ['guitar', 'yazio', 'sport'].filter((h) => state.habits[h]?.[date]?.done);
 
 // Ereignis-Delegation für alle Listen mit Tages-Einträgen und Aufgaben.
 export function bindItems(el, date) {
@@ -132,8 +140,12 @@ function saveHabitNote(habit, date, text) {
   ctx.store.update((s) => M.setHabit(s, habit, date, { note: text.trim() }), { silent: true });
 }
 
+// Plan-Tab "Heute": Termine, Aufgaben und eine Kurzzeile zur Routine.
 export function renderDayItems(el, state, date) {
-  el.innerHTML = dayItemsHTML(state, date);
+  const done = routineDone(state, date);
+  const mark = (h, l) => `${done.includes(h) ? '✓' : '○'} ${l}`;
+  el.innerHTML = `${agendaHTML(state, date)}
+    <button class="routine-line" data-goto="routine">Routine ${done.length}/3 · ${mark('guitar', 'Gitarre')} · ${mark('yazio', 'Yazio')} · ${mark('sport', 'Sport')} →</button>`;
   bindItems(el, date);
 }
 
@@ -151,9 +163,12 @@ export function openDay(date) {
   openSheet({
     title: `${formatShort(date)}${isToday ? ' · Heute' : ''}`,
     render(body) {
-      body.innerHTML = `<div class="list">${dayItemsHTML(ctx.store.state, date)}</div>
+      const st = ctx.store.state;
+      body.innerHTML = `<div class="list">${agendaHTML(st, date)}</div>
+        <details class="routine-fold"${routineOpen ? ' open' : ''}><summary>Routine ${routineDone(st, date).length}/3</summary><div class="list">${habitsHTML(st, date)}</div></details>
         <div class="row-btns"><button class="btn" data-act="new-task">+ Aufgabe</button><button class="btn" data-act="new-event">+ Termin</button></div>`;
       bindItems(body, date);
+      body.querySelector('.routine-fold').ontoggle = (e) => { routineOpen = e.target.open; };
     },
   });
 }

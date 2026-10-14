@@ -2,7 +2,8 @@ import { createStore } from './store.js';
 import { ctx, today, nowHM, esc } from './ctx.js';
 import { dayOfKur, diffDays, formatShort, KUR_START, KUR_END } from './dates.js';
 import { renderCalendar } from './calendar.js';
-import { renderDayItems, renderSportWeek, openDay } from './dayitems.js';
+import { renderDayItems, openDay } from './dayitems.js';
+import { renderRoutine } from './routine.js';
 import { renderParking, openTaskEditor } from './parking.js';
 import { renderCheckin } from './checkin.js';
 import { renderGoals } from './goals.js';
@@ -69,10 +70,10 @@ function renderAll() {
   renderAlert();
   renderCheckin($('checkin'), state, day, nowHM());
   renderCalendar($('calendar'), state, day);
-  renderSportWeek($('sport-week'), state, day);
   $('today-title').textContent = `Heute · ${formatShort(day)}`;
   renderDayItems($('today'), state, day);
   renderParking($('parking'), state, day);
+  renderRoutine($('routine'), state);
   renderGoals($('goals'), state);
   renderNotes($('notes'), state);
   refreshSheet();
@@ -113,6 +114,8 @@ async function init() {
     const c = e.target.closest('.day-col');
     if (c) openDay(c.dataset.date);
   };
+  // "Routine →"-Zeile im Plan-Tab
+  $('today').addEventListener('click', (e) => { if (e.target.closest('[data-goto="routine"]')) switchTab('routine'); });
   document.querySelector('.tabbar').onclick = (e) => {
     const b = e.target.closest('[data-tab]');
     if (b) switchTab(b.dataset.tab);

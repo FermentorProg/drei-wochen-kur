@@ -61,3 +61,4 @@
 .legend i { display: inline-block; vertical-align: middle; margin-right: 4px; }
 .legend .lb { width: 14px; height: 5px; border-radius: 3px; }
 .legend .ld { width: 8px; height: 8px; border-radius: 50%; }
+.tpill { position: relative; z-index: 1; pointer-events: none; align-self: center; height: 14px; margin: 0 1px; padding: 0 2px; border-radius: 4px; font: 600 8.5px/14px var(--font-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); background: color-mix(in srgb, var(--cat) 30%, transparent); border-left: 2px solid var(--cat); }

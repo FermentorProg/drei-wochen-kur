@@ -1,6 +1,6 @@
 import { weeks, WD, CAL_START, CAL_END, KUR_START, KUR_END, diffDays, formatShort } from './dates.js';
 import { segments, doneDates, sliceWeek } from './streaks.js';
-import { isGroupDone } from './model.js';
+import { isGroupDone, CATEGORIES } from './model.js';
 import { esc } from './ctx.js';
 
 // Termine einer Woche zuschneiden und auf Spuren (lanes) verteilen, damit sich nichts überlappt.
@@ -26,19 +26,25 @@ export function renderCalendar(el, state, today) {
   const segY = segments(doneDates(state.habits.yazio));
   const sport = state.habits.sport || {};
   const openTasks = {};
-  for (const t of state.tasks) if (t.date && !t.done) openTasks[t.date] = (openTasks[t.date] || 0) + 1;
+  for (const t of state.tasks) if (t.date && !t.done) (openTasks[t.date] ||= []).push(t);
 
   let html = `<div class="cal-head">${WD.map((w) => `<span>${w}</span>`).join('')}</div>`;
   for (const week of weeks(CAL_START, CAL_END)) {
     const { items, laneCount } = eventSlices(state, week);
-    const rG = 2 + laneCount, rY = rG + 1, rS = rY + 1;
-    html += `<div class="week" style="grid-template-rows:24px repeat(${laneCount},20px) 12px 12px 14px">`;
+    const taskLanes = Math.min(2, Math.max(0, ...week.map((d) => openTasks[d]?.length || 0)));
+    const rT = 2 + laneCount, rG = rT + taskLanes, rY = rG + 1, rS = rY + 1;
+    html += `<div class="week" style="grid-template-rows:24px repeat(${laneCount},20px)${taskLanes ? ` repeat(${taskLanes},16px)` : ''} 12px 12px 14px">`;
     week.forEach((d, i) => {
       const col = `grid-column:${i + 1}`;
       const cls = `${d < KUR_START || d > KUR_END ? ' out' : ''}${d === today ? ' today' : ''}`;
       html += `<button class="day-col${cls}" style="${col}" data-date="${d}" aria-label="${formatShort(d)} öffnen"></button>`;
       html += `<span class="dnum${cls}" style="${col}">${+d.slice(8)}</span>`;
-      if (openTasks[d]) html += `<span class="tcount" style="${col}">${openTasks[d]}</span>`;
+      const list = openTasks[d] || [];
+      list.slice(0, 2).forEach((t, k) => {
+        const more = k === 1 && list.length > 2;
+        const c = CATEGORIES[t.category]?.color || '#A99BD6';
+        html += `<span class="tpill" style="grid-row:${rT + k};${col};--cat:${c}">${more ? `+${list.length - 1}` : esc(t.title)}</span>`;
+      });
       const s = sport[d];
       if (s?.done) {
         const types = s.types || [];
