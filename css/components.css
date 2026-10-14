@@ -31,8 +31,8 @@
 @keyframes grid-move { to { background-position: 0 40px; } }
 
 .title {
-  position: absolute; top: 14px; left: 56px; right: 56px; margin: 0;
-  font-size: 20px; font-weight: 900; line-height: 1.15; letter-spacing: 0.08em;
+  position: absolute; top: 14px; left: 100px; right: 100px; margin: 0;
+  font-size: 16px; font-weight: 900; line-height: 1.2; letter-spacing: 0.06em;
   text-shadow: 0 0 14px rgba(255, 46, 136, 0.55);
 }
 .title span { color: var(--cyan); text-shadow: 0 0 14px rgba(34, 230, 255, 0.5); }
@@ -327,3 +327,5 @@ body.dragging { -webkit-user-select: none; user-select: none; }
 .timer-btn { margin-left: auto; }
 .edit-hint { margin-left: auto; color: var(--text2); font-size: 16px; padding-left: 6px; }
 .ring-fg.goal { stroke: var(--yellow); filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.7)); }
+.hero-btn.right2 { right: 56px; }
+#btn-music.on { color: var(--cyan); box-shadow: 0 0 12px rgba(34, 230, 255, 0.45); background: rgba(34, 230, 255, 0.15); }

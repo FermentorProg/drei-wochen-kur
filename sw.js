@@ -1,10 +1,10 @@
 // Service Worker: App-Dateien vorab cachen. Online wird frisch geladen (max. 3 s), offline aus dem Cache.
-const CACHE_VERSION = 'dwk-v12';
+const CACHE_VERSION = 'dwk-v13';
 const ASSETS = [
   './', 'index.html', 'manifest.json', 'data/seed.json',
   'css/base.css', 'css/components.css', 'css/calendar.css',
   'js/app.js', 'js/actions.js', 'js/calendar.js', 'js/checkin.js', 'js/ctx.js', 'js/dates.js',
-  'js/dayitems.js', 'js/dnd.js', 'js/extras-model.js', 'js/timer.js', 'js/events.js', 'js/fx.js', 'js/goals.js', 'js/goals-model.js', 'js/review-model.js', 'js/icons.js', 'js/model.js', 'js/notes.js', 'js/notes-model.js', 'js/parking.js',
+  'js/dayitems.js', 'js/dnd.js', 'js/extras-model.js', 'js/timer.js', 'js/events.js', 'js/fx.js', 'js/goals.js', 'js/goals-model.js', 'js/review-model.js', 'js/icons.js', 'js/model.js', 'js/music.js', 'js/music-pattern.js', 'js/notes.js', 'js/notes-model.js', 'js/parking.js',
   'js/settings.js', 'js/sheet.js', 'js/sound.js', 'js/store.js', 'js/streaks.js',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png',
 ];

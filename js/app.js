@@ -10,6 +10,7 @@ import { renderNotes } from './notes.js';
 import { openSettings, setMutedAction, exportRaw, exportBackup } from './settings.js';
 import { backupDue, daysSinceBackup, snoozeBackup, nextCountdown } from './extras-model.js';
 import { checkTimer } from './timer.js';
+import { startMusic, stopMusic, isPlaying } from './music.js';
 import { refreshSheet } from './sheet.js';
 import { enableDnd } from './dnd.js';
 import { moveTask } from './actions.js';
@@ -27,6 +28,9 @@ function renderHeader(state, day) {
   $('daycount').innerHTML = `${esc(main)}${sub ? `<small>⏳ ${esc(sub)}</small>` : ''}`;
   $('btn-mute').innerHTML = state.settings.muted ? ICON.mute : ICON.sound;
   $('btn-mute').setAttribute('aria-label', state.settings.muted ? 'Ton einschalten' : 'Ton ausschalten');
+  $('btn-music').classList.toggle('on', !!state.settings.music);
+  $('btn-music').setAttribute('aria-pressed', String(!!state.settings.music));
+  $('btn-music').setAttribute('aria-label', state.settings.music ? 'Musik ausschalten' : 'Musik einschalten');
 }
 
 function renderAlert() {
@@ -93,6 +97,18 @@ async function init() {
   $('btn-settings').innerHTML = ICON.gear;
   $('fab').innerHTML = ICON.plus;
   $('btn-settings').onclick = openSettings;
+  $('btn-music').innerHTML = ICON.music;
+  $('btn-music').onclick = () => {
+    const on = !ctx.store.state.settings.music;
+    ctx.store.update((s) => { s.settings.music = on; });
+    on ? startMusic() : stopMusic();
+  };
+  // Musik darf erst nach einer Berührung starten (Autoplay-Regel); im Hintergrund pausieren.
+  document.addEventListener('pointerdown', () => { if (ctx.store.state.settings.music && !isPlaying()) startMusic(); }, { once: true });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopMusic();
+    else if (ctx.store.state.settings.music && navigator.userActivation?.hasBeenActive) startMusic();
+  });
   $('btn-mute').onclick = () => setMutedAction(!ctx.store.state.settings.muted);
   $('fab').onclick = () => openTaskEditor(null);
   $('calendar').onclick = (e) => {

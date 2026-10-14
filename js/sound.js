@@ -17,6 +17,12 @@ export function unlock() {
 
 export const setMuted = (m) => { muted = !!m; };
 
+// Gemeinsamer AudioContext für die Hintergrundmusik.
+export function audioContext() {
+  unlock();
+  return ac;
+}
+
 const hz = (midi) => 440 * 2 ** ((midi - 69) / 12);
 
 function tone(f, t0, dur, { type = 'square', vol = 0.6, slideTo = null } = {}) {

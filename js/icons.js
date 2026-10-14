@@ -8,4 +8,5 @@ export const ICON = {
   plus: svg('<path d="M12 5v14M5 12h14"/>'),
   close: svg('<path d="M6 6l12 12M18 6 6 18"/>'),
   play: svg('<path d="M8 5v14l11-7z"/>'),
+  music: svg('<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'),
 };
