@@ -1,5 +1,5 @@
 // Service Worker: App-Dateien vorab cachen. Online wird frisch geladen (max. 3 s), offline aus dem Cache.
-const CACHE_VERSION = 'dwk-v8';
+const CACHE_VERSION = 'dwk-v9';
 const ASSETS = [
   './', 'index.html', 'manifest.json', 'data/seed.json',
   'css/base.css', 'css/components.css', 'css/calendar.css',

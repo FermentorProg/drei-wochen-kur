@@ -48,15 +48,22 @@ export function adjustCount(state, id, delta) {
   const t = findTask(state, id);
   t.count = Math.max(0, (t.count || 0) + delta);
 }
-export function addTask(state, { title, category, date = null, deadline = null, note = '' }, today) {
+export const PLACES = { drinnen: '🏠 drinnen', draussen: '🌳 draußen' };
+
+export function addTask(state, { title, category, date = null, deadline = null, note = '', place = null }, today) {
   const t = {
     id: `t-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
     title, category, date, deadline, done: false, doneDate: null,
     notes: note ? [{ date: today, text: note }] : [], group: null, repeatable: false, count: 0,
+    ...(place ? { place } : {}),
   };
   state.tasks.push(t);
   return t;
 }
+// Offene, noch nicht eingeplante Unternehmungen fürs Kind; place: all | drinnen | draussen.
+export const ideas = (state, place = 'all') => state.tasks.filter((t) =>
+  t.category === 'kind' && !t.date && !t.done && (place === 'all' || t.place === place));
+
 export function addTaskNote(state, id, date, text) { findTask(state, id).notes.push({ date, text }); }
 
 export function confirmEvent(state, eventId) {

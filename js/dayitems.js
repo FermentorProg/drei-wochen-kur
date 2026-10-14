@@ -33,11 +33,14 @@ export function taskRow(t, day) {
   const badges = [];
   if (t.repeatable && t.count) badges.push(`<span class="badge">${t.count}×</span>`);
   if (t.deadline && !t.done) badges.push(`<span class="badge${M.deadlineSoon(t, day) ? ' soon' : ''}">bis ${shortDate(t.deadline)}</span>`);
+  if (t.place && M.PLACES[t.place]) badges.push(`<span class="badge">${M.PLACES[t.place]}</span>`);
   if (t.notes?.length) badges.push(`<span class="badge">✎ ${t.notes.length}</span>`);
+  const todayBtn = t.category === 'kind' && !t.date && !t.done && !t.repeatable
+    ? `<button class="btn small" data-act="task-today" data-id="${t.id}">Heute</button>` : '';
   return `<div class="item task${t.done ? ' done' : ''}" data-task-id="${t.id}" style="--cat:${cat.color}">
     ${left}
     <button class="item-title" data-act="task-open" data-id="${t.id}"><span class="t">${esc(t.title)}</span>${badges.join('')}</button>
-    <button class="icon-btn" data-act="task-date" data-id="${t.id}" aria-label="Datum wählen">${ICON.cal}</button>
+    ${todayBtn}<button class="icon-btn" data-act="task-date" data-id="${t.id}" aria-label="Datum wählen">${ICON.cal}</button>
   </div>`;
 }
 
@@ -103,6 +106,7 @@ export function bindItems(el, date) {
     } else if (act === 'task') taskAction(id, today());
     else if (act === 'task-open') openTask(id);
     else if (act === 'task-date') openDatePicker(id);
+    else if (act === 'task-today') moveTask(id, today());
     else if (act === 'confirm-ev') confirmEventAction(id);
     else if (act === 'new-task') openTaskEditor(null, date);
   };

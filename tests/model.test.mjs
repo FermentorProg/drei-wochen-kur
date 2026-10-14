@@ -69,3 +69,13 @@ test('Kategorie-Namen lassen sich über die Daten überschreiben', () => {
   assert.equal(m.categoryLabel(st, 'kind'), 'Eigener Name');
   assert.equal(m.categoryLabel(st, 'garten'), 'Garten / Gartenhaus');
 });
+test('Ideen fürs Kind: drinnen/draußen und Filter', () => {
+  const st = seed();
+  const a = m.addTask(st, { title: 'Museum', category: 'kind', place: 'drinnen' }, '2026-10-14');
+  m.addTask(st, { title: 'Wald', category: 'kind', place: 'draussen' }, '2026-10-14');
+  assert.equal(a.place, 'drinnen');
+  assert.deepEqual(m.ideas(st, 'drinnen').map((t) => t.title), ['Museum']);
+  assert.ok(m.ideas(st, 'all').some((t) => t.title === 'Erdbeerhof'));
+  m.setTaskDate(st, a.id, '2026-10-20');
+  assert.ok(!m.ideas(st, 'drinnen').length, 'eingeplante Ideen sind nicht mehr im Ideen-Filter');
+});
