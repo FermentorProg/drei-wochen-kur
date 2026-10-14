@@ -1,0 +1,79 @@
+import { addDays, diffDays, range, weekStart } from './dates.js';
+
+export const SPORT_GOAL = 4;
+export const SPORT_MAX = 5;
+export const HABITS = ['guitar', 'yazio', 'sport'];
+export const HABIT_LABELS = { guitar: 'Gitarre', yazio: 'Yazio', sport: 'Sport' };
+export const CATEGORIES = {
+  erledigen: { label: 'Erledigen', color: '#22E6FF' },
+  garten: { label: 'Garten / Gartenhaus', color: '#7CF29A' },
+  kind: { label: 'Mit Kind', color: '#FF2E88' },
+  ich: { label: 'Für mich', color: '#B14CFF' },
+};
+
+// Anzeigename einer Kategorie; per Import überschreibbar (settings.labels), damit private Namen nicht im Code stehen.
+export const categoryLabel = (state, key) => state.settings?.labels?.[key] || CATEGORIES[key]?.label || key;
+
+export function setHabit(state, habit, date, patch) {
+  const map = (state.habits[habit] ||= {});
+  map[date] = { done: false, ...map[date], ...patch };
+  return map[date];
+}
+export const toggleHabit = (state, habit, date) =>
+  setHabit(state, habit, date, { done: !state.habits[habit]?.[date]?.done }).done;
+
+export function sportCountInWeek(state, iso) {
+  const ws = weekStart(iso);
+  return range(ws, addDays(ws, 6)).filter((d) => state.habits.sport?.[d]?.done).length;
+}
+export function openHabits(state, date) {
+  const open = [];
+  if (!state.habits.guitar?.[date]?.done) open.push('guitar');
+  if (!state.habits.yazio?.[date]?.done) open.push('yazio');
+  if (!state.habits.sport?.[date]?.done && sportCountInWeek(state, date) < SPORT_GOAL) open.push('sport');
+  return open;
+}
+export const allHabitsDone = (state, date) => openHabits(state, date).length === 0;
+
+export const findTask = (state, id) => state.tasks.find((t) => t.id === id);
+export function setTaskDate(state, id, date) { findTask(state, id).date = date; }
+export function toggleTask(state, id, today) {
+  const t = findTask(state, id);
+  if (t.repeatable) { t.count = (t.count || 0) + 1; return true; }
+  t.done = !t.done;
+  t.doneDate = t.done ? (t.date && t.date < today ? t.date : today) : null;
+  return t.done;
+}
+export function adjustCount(state, id, delta) {
+  const t = findTask(state, id);
+  t.count = Math.max(0, (t.count || 0) + delta);
+}
+export function addTask(state, { title, category, date = null, deadline = null, note = '' }, today) {
+  const t = {
+    id: `t-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    title, category, date, deadline, done: false, doneDate: null,
+    notes: note ? [{ date: today, text: note }] : [], group: null, repeatable: false, count: 0,
+  };
+  state.tasks.push(t);
+  return t;
+}
+export function addTaskNote(state, id, date, text) { findTask(state, id).notes.push({ date, text }); }
+
+export function confirmEvent(state, eventId) {
+  const ev = state.events.find((e) => e.id === eventId);
+  if (ev.group) state.events = state.events.filter((e) => e === ev || e.group !== ev.group);
+  ev.optional = false;
+  ev.confirmed = true;
+  const task = state.tasks.find((t) => t.group && t.group === ev.group);
+  if (task) task.date = ev.date;
+}
+export const isGroupDone = (state, group) => !!state.tasks.find((t) => t.group === group)?.done;
+export const deadlineSoon = (task, today, days = 3) =>
+  !!task.deadline && !task.done && diffDays(today, task.deadline) <= days;
+
+export function itemsOnDate(state, date) {
+  return {
+    events: state.events.filter((e) => e.date <= date && date <= (e.endDate || e.date)),
+    tasks: state.tasks.filter((t) => t.date === date),
+  };
+}

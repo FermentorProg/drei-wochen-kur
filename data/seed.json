@@ -1,0 +1,355 @@
+{
+  "version": 1,
+  "settings": {
+    "start": "2026-10-14",
+    "end": "2026-11-04",
+    "checkinTime": "20:00",
+    "muted": false,
+    "tabClick": false
+  },
+  "habits": {
+    "guitar": {},
+    "yazio": {},
+    "sport": {}
+  },
+  "events": [
+    {
+      "id": "kur-start",
+      "title": "Kur beginnt",
+      "short": "Kur",
+      "date": "2026-10-14",
+      "optional": false,
+      "group": null
+    },
+    {
+      "id": "werkstatt-1",
+      "title": "Instrumente begutachten lassen?",
+      "short": "Werkstatt",
+      "date": "2026-10-16",
+      "optional": true,
+      "group": "werkstatt"
+    },
+    {
+      "id": "amt-1",
+      "title": "Behördentermin, offene Sprechstunde?",
+      "short": "Amt",
+      "date": "2026-10-20",
+      "optional": true,
+      "group": "amt"
+    },
+    {
+      "id": "besuch",
+      "title": "Urlaub: Besuch in der Kur",
+      "short": "Besuch Kur",
+      "date": "2026-10-22",
+      "endDate": "2026-10-23",
+      "optional": false,
+      "group": null
+    },
+    {
+      "id": "amt-2",
+      "title": "Behördentermin, offene Sprechstunde?",
+      "short": "Amt",
+      "date": "2026-10-27",
+      "optional": true,
+      "group": "amt"
+    },
+    {
+      "id": "halloween-termin",
+      "title": "Halloween",
+      "short": "Halloween",
+      "date": "2026-10-31",
+      "optional": false,
+      "group": null
+    },
+    {
+      "id": "amt-3",
+      "title": "Behördentermin, offene Sprechstunde?",
+      "short": "Amt",
+      "date": "2026-11-03",
+      "optional": true,
+      "group": "amt"
+    },
+    {
+      "id": "kur-ende",
+      "title": "Kur endet",
+      "short": "Kur-Ende",
+      "date": "2026-11-04",
+      "optional": false,
+      "group": null
+    },
+    {
+      "id": "werkstatt-2",
+      "title": "Instrumente begutachten lassen?",
+      "short": "Werkstatt",
+      "date": "2026-11-06",
+      "optional": true,
+      "group": "werkstatt"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "wolfskostuem",
+      "title": "Wolfskostüm für Halloween bestellen",
+      "category": "erledigen",
+      "date": null,
+      "deadline": "2026-10-25",
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "party",
+      "title": "Halloween-Party klären",
+      "category": "erledigen",
+      "date": null,
+      "deadline": "2026-10-28",
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "elektriker",
+      "title": "Elektriker: kaputte Steckdose reparieren lassen",
+      "category": "erledigen",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "angebot",
+      "title": "Angebot einholen (flexibel)",
+      "category": "erledigen",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "amt",
+      "title": "Behördentermin (offene Sprechstunde)",
+      "category": "erledigen",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": "amt",
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "werkstatt",
+      "title": "Instrumente in einer Werkstatt begutachten lassen",
+      "category": "erledigen",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": "werkstatt",
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "lochfraese",
+      "title": "Lochfräse besorgen",
+      "category": "garten",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "strom-gartenhaus",
+      "title": "Strom im Gartenhaus verlegen (Kabel durchfädeln)",
+      "category": "garten",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "wasserleitung",
+      "title": "Wasserleitung durchpusten",
+      "category": "garten",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "laub-harken",
+      "title": "Laub harken",
+      "category": "garten",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "laub-wegfahren",
+      "title": "Laub wegfahren",
+      "category": "garten",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "erdbeerhof",
+      "title": "Erdbeerhof",
+      "category": "kind",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "spielplatz",
+      "title": "Spielplatz",
+      "category": "kind",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": true,
+      "count": 0
+    },
+    {
+      "id": "halloween",
+      "title": "Halloween feiern",
+      "category": "kind",
+      "date": "2026-10-31",
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "paramount",
+      "title": "Paramount+ abonnieren und Star Trek schauen",
+      "category": "ich",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "hifi",
+      "title": "HiFi-Laden: Standlautsprecher probehören",
+      "category": "ich",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0
+    },
+    {
+      "id": "slowcooker",
+      "title": "Slow Cooker: 3 Gerichte ausprobieren",
+      "category": "ich",
+      "date": null,
+      "deadline": null,
+      "done": false,
+      "doneDate": null,
+      "notes": [],
+      "group": null,
+      "repeatable": false,
+      "count": 0,
+      "goal": "slowcooker"
+    }
+  ],
+  "goals": {
+    "jazz": {
+      "corcovado": 0,
+      "autumn-leaves": 0,
+      "all-the-things": 0
+    },
+    "arise": {
+      "arise": false,
+      "dead-embryonic-cells": false,
+      "desperate-cry": false,
+      "murder": false,
+      "subtraction": false,
+      "altered-state": false,
+      "under-siege": false,
+      "meaningless-movements": false,
+      "infected-voice": false
+    },
+    "slowcooker": [
+      {
+        "idea": "Marokkanisch / Tajine",
+        "name": "",
+        "date": null,
+        "rating": null,
+        "note": ""
+      },
+      {
+        "idea": "Indisch",
+        "name": "",
+        "date": null,
+        "rating": null,
+        "note": ""
+      },
+      {
+        "idea": "",
+        "name": "",
+        "date": null,
+        "rating": null,
+        "note": ""
+      }
+    ]
+  }
+}

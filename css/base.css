@@ -1,0 +1,63 @@
+:root {
+  --bg: #140B2B;
+  --bg2: #1A1033;
+  --card: rgba(36, 20, 70, 0.82);
+  --card-solid: #241446;
+  --line: rgba(177, 76, 255, 0.22);
+  --magenta: #FF2E88;
+  --cyan: #22E6FF;
+  --violet: #B14CFF;
+  --yellow: #FFD23F;
+  --orange: #FF9F43;
+  --red: #FF4D6D;
+  --text: #F3EEFF;
+  --text2: #A99BD6;
+  --dim: #5A4E86;
+  --radius: 16px;
+  --font-head: 'Orbitron', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --tabbar-h: 64px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%) fixed;
+  color: var(--text);
+  font: 15px/1.45 var(--font-body);
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 96px);
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .num { font-family: var(--font-head); letter-spacing: 0.04em; }
+h2 {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text2); margin: 24px 4px 10px;
+}
+h3 { font-size: 12px; margin: 16px 0 8px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; }
+
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+textarea, input, select {
+  font: inherit; color: var(--text);
+  background: rgba(20, 11, 43, 0.6);
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px; width: 100%;
+}
+textarea { resize: none; field-sizing: content; min-height: 44px; }
+input[type="date"] { min-height: 44px; }
+textarea:focus, input:focus, select:focus { outline: 2px solid var(--cyan); outline-offset: 1px; border-color: transparent; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+::placeholder { color: var(--text2); opacity: 0.8; }
+
+main { max-width: 480px; margin: 0 auto; padding: 0 12px; }
+.muted { color: var(--text2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

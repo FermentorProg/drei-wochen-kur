@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#140B2B">
+  <title>Drei Wochen Kur</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/calendar.css">
+</head>
+<body>
+  <header class="hero" id="hero">
+    <div class="sun" aria-hidden="true"></div>
+    <div class="floor" aria-hidden="true"><div class="floor-grid"></div></div>
+    <button class="icon-btn hero-btn left" id="btn-mute" aria-label="Ton an/aus"></button>
+    <button class="icon-btn hero-btn right" id="btn-settings" aria-label="Einstellungen"></button>
+    <h1 class="title">DREI WOCHEN <span>KUR</span></h1>
+    <p class="daycount num" id="daycount"></p>
+  </header>
+
+  <div id="alert"></div>
+  <div id="checkin" hidden></div>
+
+  <main>
+    <section class="tab active" id="tab-plan" aria-label="Plan">
+      <h2>Kalender</h2>
+      <div class="card cal" id="calendar"></div>
+      <div class="card sw" id="sport-week"></div>
+      <h2 id="today-title">Heute</h2>
+      <div class="card list" id="today"></div>
+      <h2>Parkplatz</h2>
+      <div id="parking" data-drop="parking"></div>
+    </section>
+    <section class="tab" id="tab-ziele" aria-label="Ziele">
+      <div id="goals"></div>
+    </section>
+    <section class="tab" id="tab-notizen" aria-label="Notizen">
+      <div id="notes"></div>
+    </section>
+  </main>
+
+  <button class="fab" id="fab" aria-label="Neue Aufgabe"></button>
+
+  <nav class="tabbar" aria-label="Navigation">
+    <button data-tab="plan" class="active">Plan</button>
+    <button data-tab="ziele">Ziele</button>
+    <button data-tab="notizen">Notizen</button>
+  </nav>
+
+  <div id="sheet-root"></div>
+  <div id="toast-root" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
