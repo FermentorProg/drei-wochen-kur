@@ -27,16 +27,16 @@ export function renderParking(el, state, day) {
   let html = Object.entries(M.CATEGORIES).map(([k, c]) => {
     if (k === 'kind') return ideasGroup(state, day, c.color);
     const list = open.filter((t) => t.category === k).sort(byDeadline);
-    if (!list.length) return '';
     return `<div class="pk-group" style="--cat:${c.color}"><h3>${esc(M.categoryLabel(state, k))}</h3>
-      <div class="card list">${list.map((t) => taskRow(t, day)).join('')}</div></div>`;
+      <div class="card list">${list.map((t) => taskRow(t, day)).join('') || '<p class="muted">Alles erledigt hier ✓</p>'}
+        <form class="g-add" data-quick="${k}"><input placeholder="Neue Aufgabe …" aria-label="Neue Aufgabe: ${esc(M.categoryLabel(state, k))}" autocomplete="off"><button class="btn small" type="submit" aria-label="Hinzufügen">+</button></form>
+      </div></div>`;
   }).join('');
   const orphans = open.filter((t) => !M.CATEGORIES[t.category]);
   if (orphans.length) {
     html += `<div class="pk-group" style="--cat:#A99BD6"><h3>Sonstiges</h3>
       <div class="card list">${orphans.map((t) => taskRow(t, day)).join('')}</div></div>`;
   }
-  if (!open.length) html = '<div class="card placeholder">Parkplatz ist leer – stark! 💪</div>';
   if (done.length) {
     html += `<details class="done-list"><summary>Erledigt (${done.length})</summary>
       <div class="card list">${done.map((t) => taskRow(t, day)).join('')}</div></details>`;
@@ -54,13 +54,14 @@ export function renderParking(el, state, day) {
   };
   el.onsubmit = (e) => {
     e.preventDefault();
-    const input = e.target.querySelector('input');
-    const title = input.value.trim();
+    const form = e.target;
+    const title = form.querySelector('input').value.trim();
     if (!title) return;
-    const place = ideaFilter === 'all' ? null : ideaFilter;
-    ctx.store.update((s) => M.addTask(s, { title, category: 'kind', place }, today()));
-    toast(`Idee gemerkt: ${title}`);
-    el.querySelector('[data-idea] input')?.focus();
+    const category = form.dataset.quick || 'kind';
+    const place = category === 'kind' && ideaFilter !== 'all' ? ideaFilter : null;
+    ctx.store.update((s) => M.addTask(s, { title, category, place }, today()));
+    toast(category === 'kind' ? `Idee gemerkt: ${title}` : `Aufgabe angelegt: ${title}`);
+    el.querySelector(category === 'kind' ? '[data-idea] input' : `[data-quick="${category}"] input`)?.focus();
   };
 }
 
