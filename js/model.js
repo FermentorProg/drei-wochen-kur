@@ -66,6 +66,28 @@ export const ideas = (state, place = 'all') => state.tasks.filter((t) =>
 
 export function addTaskNote(state, id, date, text) { findTask(state, id).notes.push({ date, text }); }
 
+// Kurztext für die Kalender-Pille: erstes Wort, max. 11 Zeichen.
+const shortOf = (title) => title.split(/[\s,:]+/)[0].slice(0, 11);
+
+export function addEvent(state, { title, date, endDate = null, optional = false }) {
+  const text = String(title || '').trim();
+  if (!text || !date) return null;
+  const e = { id: `e-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`, title: text, short: shortOf(text), date, endDate: null, optional: !!optional, group: null };
+  state.events.push(e);
+  updateEvent(state, e.id, { endDate });
+  return e;
+}
+export function updateEvent(state, id, patch) {
+  const e = state.events.find((x) => x.id === id);
+  if (!e) return;
+  Object.assign(e, patch);
+  if (patch.title !== undefined) { e.title = String(patch.title).trim(); e.short = shortOf(e.title); }
+  if (!e.endDate || e.endDate <= e.date) e.endDate = null;
+}
+export function removeEvent(state, id) {
+  state.events = state.events.filter((x) => x.id !== id);
+}
+
 export function confirmEvent(state, eventId) {
   const ev = state.events.find((e) => e.id === eventId);
   if (ev.group) state.events = state.events.filter((e) => e === ev || e.group !== ev.group);

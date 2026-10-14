@@ -79,3 +79,18 @@ test('Ideen fürs Kind: drinnen/draußen und Filter', () => {
   m.setTaskDate(st, a.id, '2026-10-20');
   assert.ok(!m.ideas(st, 'drinnen').length, 'eingeplante Ideen sind nicht mehr im Ideen-Filter');
 });
+test('eigene Termine anlegen, ändern, löschen', () => {
+  const st = seed();
+  const e = m.addEvent(st, { title: '  Elternabend Schule ', date: '2026-10-28' });
+  assert.equal(e.title, 'Elternabend Schule');
+  assert.equal(e.short, 'Elternabend');
+  assert.equal(e.optional, false);
+  assert.equal(m.addEvent(st, { title: ' ', date: '2026-10-28' }), null);
+  m.updateEvent(st, e.id, { title: 'Ausflug', date: '2026-10-29', endDate: '2026-10-30', optional: true });
+  const u = st.events.find((x) => x.id === e.id);
+  assert.deepEqual([u.short, u.date, u.endDate, u.optional], ['Ausflug', '2026-10-29', '2026-10-30', true]);
+  m.updateEvent(st, e.id, { endDate: '2026-10-28' });
+  assert.equal(st.events.find((x) => x.id === e.id).endDate, null, 'Ende vor Beginn wird verworfen');
+  m.removeEvent(st, e.id);
+  assert.ok(!st.events.some((x) => x.id === e.id));
+});
