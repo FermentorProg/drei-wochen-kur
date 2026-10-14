@@ -5,6 +5,25 @@ import { addDays, CAL_START, CAL_END } from './dates.js';
 import { checkBtn } from './dayitems.js';
 import { play } from './sound.js';
 import { ICON } from './icons.js';
+import { weekReview, reviewWeeks } from './review-model.js';
+
+let reviewStart = null;
+
+function review(state) {
+  const weeks = reviewWeeks(today());
+  const start = reviewStart || (weeks.find((w) => w.current) || weeks[0]).start;
+  const r = weekReview(state, start);
+  const chips = weeks.map((w, i) =>
+    `<button class="chip${w.start === start ? ' on' : ''}" data-week="${w.start}" aria-label="Woche ${i + 1}">${dm(w.start)}</button>`).join('');
+  const tile = (n, max, label, color) => `<div class="rv-tile" style="--c:${color}"><span class="num">${n}<small>/${max}</small></span><span>${label}</span></div>`;
+  const list = (items) => items.map((t) => `<li>${esc(t)}</li>`).join('');
+  const highlights = r.notes.map((n) => `<li><b>${esc(n.title)}:</b> ${esc(n.text)}</li>`).join('');
+  return `<div class="card rv"><div class="chips rv-weeks">${chips}</div>
+    <p class="muted rv-range">${dm(r.start)} – ${dm(r.end)}${r.bestGuitarStreak >= 3 ? ` · längster Gitarren-Streak 🔥 ${r.bestGuitarStreak}` : ''}</p>
+    <div class="rv-tiles">${tile(r.guitar, 7, 'Gitarre', 'var(--magenta)')}${tile(r.yazio, 7, 'Yazio', 'var(--cyan)')}${tile(r.sport.count, SPORT_MAX, `Sport (${r.sport.kraft} K / ${r.sport.ausdauer} A)`, 'var(--yellow)')}</div>
+    ${r.tasksDone.length || r.cooked.length ? `<h3>Erledigt</h3><ul class="rv-list">${list(r.tasksDone)}${list(r.cooked.map((c) => `🍲 ${c}`))}</ul>` : '<p class="muted">Noch keine Aufgaben erledigt in dieser Woche.</p>'}
+    ${highlights ? `<h3>Aus dem Tagebuch</h3><ul class="rv-list">${highlights}</ul>` : ''}</div>`;
+}
 
 const addForm = (kind, placeholder) => `<form class="g-add" data-add="${kind}"><input placeholder="${placeholder}" aria-label="${placeholder}" autocomplete="off"><button class="btn small" type="submit">+ Hinzufügen</button></form>`;
 const delBtn = (kind, id, label) => `<button class="icon-btn g-del" data-del="${kind}" data-id="${id}" aria-label="${esc(label)} entfernen">${ICON.close}</button>`;
@@ -75,7 +94,8 @@ function saveSlot(i, patch, silent) {
 
 export function renderGoals(el, state) {
   G.ensureGoalLists(state);
-  el.innerHTML = `<h2>Gesamtfortschritt</h2>${overall(state)}
+  el.innerHTML = `<h2>Wochenrückblick</h2>${review(state)}
+    <h2>Gesamtfortschritt</h2>${overall(state)}
     <h2>Gitarre</h2>${jazz(state)}${arise(state)}
     <h2>Slow Cooker</h2>${slowcooker(state)}
     <h2>Sport</h2>${sport(state)}`;
@@ -83,6 +103,7 @@ export function renderGoals(el, state) {
     const b = e.target.closest('button');
     if (!b) return;
     if (b.dataset.del) return removeItem(b.dataset.del, b.dataset.id);
+    if (b.dataset.week) { reviewStart = b.dataset.week; renderGoals(el, ctx.store.state); return; }
     if ('addslot' in b.dataset) {
       ctx.store.update((st) => G.addSlot(st));
       el.querySelectorAll('.g-slot input[data-field="name"]').forEach((i, n, all) => n === all.length - 1 && i.focus());
