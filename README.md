@@ -21,6 +21,10 @@ Updates: Änderungen committen und pushen. Wenn sich App-Dateien ändern, in `sw
 2. Menü **⋮ → „App installieren“** (oder „Zum Startbildschirm hinzufügen“).
 3. Die App einmal online öffnen, danach funktioniert sie auch offline.
 
+## Eigene Daten importieren
+
+Die Startdaten im Repo sind bewusst neutral gehalten. Persönliche Daten (Namen, Termine) liegen als JSON-Datei nur lokal und werden einmalig auf dem Handy importiert: Zahnrad → **Importieren** → Datei wählen. Am besten direkt nach der Installation, bevor du etwas abhakst, denn der Import ersetzt alle Daten.
+
 ## Backup
 
 Zahnrad oben rechts → **Exportieren (JSON)** speichert alle Daten als Datei. **Importieren** stellt ein Backup wieder her (ersetzt die aktuellen Daten). Achtung: Wer in Chrome die Website-Daten löscht oder die App deinstalliert, löscht auch die Daten. Darum ab und zu exportieren.

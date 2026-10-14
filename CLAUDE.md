@@ -25,3 +25,11 @@ PWA für Android (Chrome), läuft auf GitHub Pages. Anforderungen: `drei-wochen-
 ## Design-Tokens
 
 Farben und Schriften siehe Prompt, Abschnitt „Design“. Mobile first 360–430 px, Touch-Ziele ≥ 44 px, `prefers-reduced-motion` respektieren, Kontrast WCAG AA.
+
+## Privatsphäre (öffentliches Repo!)
+
+- `main` ist öffentlich auf GitHub (FermentorProg/drei-wochen-kur, Pages). **Keine echten Namen, Orte oder privaten Details** in Code, Seed, Tests oder Commit-Messages.
+- Echte Daten liegen nur lokal in `privat/persoenlich.json` (gitignored) und werden auf dem Handy importiert. Kategorie-Namen sind per `settings.labels` überschreibbar.
+- `drei-wochen-kur-prompt.md` und `docs/` sind lokal und gitignored (enthalten private Angaben).
+- Branch `archiv-privat` enthält die alte Historie mit privaten Daten: **niemals pushen**. Nur `main` pushen.
+- Git-Identität in diesem Repo: `Fermentor <261413185+FermentorProg@users.noreply.github.com>` (lokal gesetzt).
