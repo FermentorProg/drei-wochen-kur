@@ -4,7 +4,7 @@ PWA für Android (Chrome), läuft auf GitHub Pages. Anforderungen: `drei-wochen-
 
 ## Arbeitsregeln
 
-- **Usage-Budget:** Verbrauch des 5h-Fensters per `get_usage` prüfen. Warnen bei 5/10/15/20/25 % und (seit 2026-10-14 erweitert) bei 40/50/60/65 %. Bei **70 %** stoppen und Stand übergeben.
+- **Usage-Budget:** Verbrauch des 5h-Fensters per `get_usage` prüfen. Grenze seit 2026-10-14 auf **100 %** erweitert (Nutzerfreigabe). Weiter bei 60/70/80/90 % warnen.
 - Erst planen, dann entwickeln. Größere Designabweichungen vom Prompt vorher abfragen.
 - Alle UI-Texte auf Deutsch.
 - Reihenfolge: Plan-Tab → Ziele → Notizen (Stand 2026-10-14: alle drei umgesetzt, auf `main`).
