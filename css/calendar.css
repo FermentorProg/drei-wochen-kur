@@ -5,29 +5,29 @@
 
 .day-col {
   grid-row: 1 / -1; z-index: 0; margin: 0 1px; border-radius: 10px;
-  background: rgba(177, 76, 255, 0.06); transition: box-shadow 0.15s, background 0.15s;
+  background: color-mix(in srgb, var(--violet) 6%, transparent); transition: box-shadow 0.15s, background 0.15s;
 }
 .day-col.out { background: rgba(0, 0, 0, 0.22); }
-.day-col.today { background: rgba(255, 210, 63, 0.08); box-shadow: inset 0 0 0 1.5px rgba(255, 210, 63, 0.7); }
-.day-col.drop-hover { background: rgba(34, 230, 255, 0.16); box-shadow: inset 0 0 0 2px var(--cyan); }
+.day-col.today { background: color-mix(in srgb, var(--yellow) 8%, transparent); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--yellow) 70%, transparent); }
+.day-col.drop-hover { background: color-mix(in srgb, var(--cyan) 16%, transparent); box-shadow: inset 0 0 0 2px var(--cyan); }
 
 .dnum, .pill, .bar, .dot, .tcount { position: relative; z-index: 1; pointer-events: none; }
 .dnum { grid-row: 1; align-self: center; text-align: center; font: 700 13px var(--font-head); }
-.dnum.out { color: #8577B8; font-weight: 500; }
-.dnum.today { color: var(--yellow); text-shadow: 0 0 10px rgba(255, 210, 63, 0.6); }
+.dnum.out { color: var(--out-day); font-weight: 500; }
+.dnum.today { color: var(--yellow); text-shadow: 0 0 10px color-mix(in srgb, var(--yellow) 60%, transparent); }
 .tcount {
   grid-row: 1; justify-self: end; align-self: start; margin: 2px 3px 0 0;
   min-width: 14px; height: 14px; padding: 0 3px; border-radius: 7px;
-  font: 700 9px/14px var(--font-body); text-align: center; color: #140B2B; background: var(--cyan);
+  font: 700 9px/14px var(--font-body); text-align: center; color: var(--on-accent); background: var(--cyan);
 }
 
 .pill {
   align-self: center; height: 18px; margin: 0 1px; padding: 0 1px; border-radius: 6px; letter-spacing: -0.1px;
   font: 600 9px/16px var(--font-body); text-align: center;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  background: rgba(177, 76, 255, 0.38); border: 1px solid var(--violet); color: var(--text);
+  background: color-mix(in srgb, var(--violet) 38%, transparent); border: 1px solid var(--violet); color: var(--text);
 }
-.pill.opt { background: transparent; border-style: dashed; color: #DCC2FF; }
+.pill.opt { background: transparent; border-style: dashed; color: var(--opt-text); }
 .pill.done { opacity: 0.5; text-decoration: line-through; }
 .pill.cl { margin-left: 0; border-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0; }
 .pill.cr { margin-right: 0; border-right: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; }
@@ -52,8 +52,8 @@
 }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: 0 0; } }
 
-.dot { justify-self: center; align-self: center; width: 10px; height: 10px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 6px rgba(255, 210, 63, 0.6); }
-.dot.ausdauer { background: var(--orange); box-shadow: 0 0 6px rgba(255, 159, 67, 0.6); }
+.dot { justify-self: center; align-self: center; width: 10px; height: 10px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 6px color-mix(in srgb, var(--yellow) 60%, transparent); }
+.dot.ausdauer { background: var(--orange); box-shadow: 0 0 6px color-mix(in srgb, var(--orange) 60%, transparent); }
 .dot.both { background: conic-gradient(var(--yellow) 0 50%, var(--orange) 0); }
 .dot.none { background: var(--text2); box-shadow: none; }
 

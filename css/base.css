@@ -17,7 +17,74 @@
   --font-head: 'Orbitron', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --tabbar-h: 64px;
+  --on-accent: #140B2B;
+  --out-day: #8577B8;
+  --opt-text: #DCC2FF;
+  --sky1: #140B2B;
+  --sky2: #2A0F4D;
+  --sky3: #4A1460;
+  --sun1: var(--yellow);
+  --sun2: var(--orange);
+  --sun3: var(--magenta);
+  --grid1: rgba(255, 46, 136, 0.75);
+  --grid2: rgba(177, 76, 255, 0.75);
   color-scheme: dark;
+}
+
+/* Theme "Sonnenuntergang": heller und wärmer */
+:root[data-theme="sunset"] {
+  --bg: #2A1030;
+  --bg2: #4A1A3A;
+  --card: rgba(90, 37, 80, 0.82);
+  --card-solid: #5A2550;
+  --line: rgba(255, 140, 120, 0.3);
+  --magenta: #FF4F8B;
+  --cyan: #5EF2D0;
+  --violet: #FF8FD1;
+  --yellow: #FFE066;
+  --orange: #FF8C42;
+  --text: #FFF4EC;
+  --text2: #F2C6C9;
+  --dim: #A0708A;
+  --on-accent: #2A1030;
+  --out-day: #D29BB0;
+  --opt-text: #FFD0E6;
+  --sky1: #3A1240;
+  --sky2: #9A3060;
+  --sky3: #FF7A59;
+  --sun1: #FFF1A8;
+  --sun2: #FFC15E;
+  --sun3: #FF6F61;
+  --grid1: rgba(255, 140, 100, 0.8);
+  --grid2: rgba(255, 79, 139, 0.7);
+}
+
+/* Theme "Eis": kühl, Petrol und Türkis */
+:root[data-theme="ice"] {
+  --bg: #06131F;
+  --bg2: #0B2233;
+  --card: rgba(16, 48, 74, 0.82);
+  --card-solid: #10304A;
+  --line: rgba(80, 200, 255, 0.25);
+  --magenta: #8F7CFF;
+  --cyan: #3DF5E0;
+  --violet: #5AA9FF;
+  --yellow: #E6F56A;
+  --orange: #FFB86B;
+  --text: #EAF6FF;
+  --text2: #9CC3DA;
+  --dim: #4D6F86;
+  --on-accent: #06131F;
+  --out-day: #7FA3BA;
+  --opt-text: #BFE3FF;
+  --sky1: #06131F;
+  --sky2: #0E2E4A;
+  --sky3: #1F6E8C;
+  --sun1: #F2FFB0;
+  --sun2: #3DF5E0;
+  --sun3: #5AA9FF;
+  --grid1: rgba(61, 245, 224, 0.7);
+  --grid2: rgba(90, 169, 255, 0.7);
 }
 
 * { box-sizing: border-box; }

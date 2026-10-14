@@ -1,8 +1,6 @@
 // Hintergrundmusik: Synthwave-Loop, live mit Web Audio erzeugt (Lookahead-Scheduler).
 import { audioContext } from './sound.js';
-import { patternAt, BPM, STEPS } from './music-pattern.js';
-
-const STEP = 60 / BPM / 4;
+import { patternAt, getStyle } from './music-pattern.js';
 const LOOKAHEAD = 0.15;
 const VOLUME = 0.09;
 
@@ -11,6 +9,8 @@ let bus = null;
 let noiseBuf = null;
 let timer = null;
 let step = 0;
+let styleId = 'cool';
+const stepLen = () => 60 / getStyle(styleId).bpm / 4;
 let nextTime = 0;
 
 const hz = (m) => 440 * 2 ** ((m - 69) / 12);
@@ -64,25 +64,49 @@ function kick(t) {
   o.stop(t + 0.2);
 }
 
+function tom(t, freq) {
+  const o = ac.createOscillator();
+  const g = ac.createGain();
+  o.frequency.setValueAtTime(freq, t);
+  o.frequency.exponentialRampToValueAtTime(freq * 0.5, t + 0.15);
+  g.gain.setValueAtTime(0.6, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+  o.connect(g).connect(bus);
+  o.start(t);
+  o.stop(t + 0.2);
+}
+
 function playStep(s, t) {
-  const p = patternAt(s);
+  const st = getStyle(styleId);
+  const STEP = stepLen();
+  const p = patternAt(styleId, s);
+  const ambient = styleId === 'ambient';
   if (p.kick) kick(t);
   if (p.snare) noise(t, 0.16, { freq: 1800, type: 'bandpass', vol: 0.5 });
-  if (p.hat) noise(t, 0.04, { freq: 7000, vol: 0.18 });
-  if (p.bass !== null) voice(hz(p.bass), t, STEP * 1.8, { type: 'triangle', vol: 0.7 });
-  voice(hz(p.arp), t, STEP * 0.9, { type: 'square', vol: 0.09 });
-  if (p.lead) voice(hz(p.lead.note), t, STEP * p.lead.len * 0.95, { type: 'square', vol: 0.18, attack: 0.01, vibrato: 4 });
+  if (p.hat) noise(t, ambient ? 0.3 : 0.04, { freq: ambient ? 5000 : 7000, vol: ambient ? 0.05 : 0.18 });
+  if (p.fill) tom(t, 220 - (s % 4) * 30);
+  if (p.pad) for (const n of p.chord) voice(hz(n), t, STEP * 16, { type: 'triangle', vol: 0.08, attack: 0.8 });
+  if (p.bass !== null) voice(hz(p.bass), t, STEP * (ambient ? 7 : 1.8), { type: st.sound.bass, vol: ambient ? 0.5 : 0.6, attack: ambient ? 0.1 : 0.005 });
+  if (p.arp !== null) voice(hz(p.arp + (ambient ? 12 : 0)), t, STEP * (ambient ? 3 : 0.9), { type: ambient ? 'sine' : 'square', vol: st.sound.arpVol });
+  if (p.lead) voice(hz(p.lead.note), t, STEP * p.lead.len * 0.95, { type: st.sound.lead, vol: st.sound.leadVol, attack: ambient ? 0.02 : 0.01, vibrato: ambient ? 2 : 4 });
 }
 
 function schedule() {
   while (nextTime < ac.currentTime + LOOKAHEAD) {
     playStep(step, nextTime);
-    step = (step + 1) % STEPS;
-    nextTime += STEP;
+    step = (step + 1) % getStyle(styleId).steps;
+    nextTime += stepLen();
   }
 }
 
 export const isPlaying = () => timer !== null;
+
+// Stil wechseln; läuft Musik, startet sie im neuen Stil neu.
+export function setMusicStyle(id) {
+  if (id === styleId) return;
+  styleId = id;
+  if (timer) { stopMusic(); setTimeout(startMusic, 350); }
+}
 
 export function startMusic() {
   if (timer) return;

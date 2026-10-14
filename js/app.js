@@ -7,10 +7,10 @@ import { renderParking, openTaskEditor } from './parking.js';
 import { renderCheckin } from './checkin.js';
 import { renderGoals } from './goals.js';
 import { renderNotes } from './notes.js';
-import { openSettings, setMutedAction, exportRaw, exportBackup } from './settings.js';
+import { openSettings, setMutedAction, exportRaw, exportBackup, applyTheme, setMusicOn } from './settings.js';
 import { backupDue, daysSinceBackup, snoozeBackup, nextCountdown } from './extras-model.js';
 import { checkTimer } from './timer.js';
-import { startMusic, stopMusic, isPlaying } from './music.js';
+import { startMusic, stopMusic, isPlaying, setMusicStyle } from './music.js';
 import { refreshSheet } from './sheet.js';
 import { enableDnd } from './dnd.js';
 import { moveTask } from './actions.js';
@@ -98,11 +98,9 @@ async function init() {
   $('fab').innerHTML = ICON.plus;
   $('btn-settings').onclick = openSettings;
   $('btn-music').innerHTML = ICON.music;
-  $('btn-music').onclick = () => {
-    const on = !ctx.store.state.settings.music;
-    ctx.store.update((s) => { s.settings.music = on; });
-    on ? startMusic() : stopMusic();
-  };
+  $('btn-music').onclick = () => setMusicOn(!ctx.store.state.settings.music);
+  applyTheme(ctx.store.state.settings.theme);
+  setMusicStyle(ctx.store.state.settings.musicStyle || 'cool');
   // Musik darf erst nach einer Berührung starten (Autoplay-Regel); im Hintergrund pausieren.
   document.addEventListener('pointerdown', () => { if (ctx.store.state.settings.music && !isPlaying()) startMusic(); }, { once: true });
   document.addEventListener('visibilitychange', () => {
